@@ -1,0 +1,15 @@
+#root {
+    display: flex;
+}
+
+.leftDiv {
+    width: 40%;
+    height: 100vh;
+    background-color: beige;
+}
+
+.rightDiv {
+    width: 60%;
+    height: 100vh;
+    background-color: rgb(191, 247, 228);
+}
