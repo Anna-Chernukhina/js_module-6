@@ -69,12 +69,42 @@ firstDiv.append(title, list, addButton);
 //перебираем массив через map и деструктуризируем
 //join используется для преобразования результата в виде массива в строку для insertAdjacentHTML()
 function renderList() {
-    const markup = books.map(({ id, title }) => {
-        return `<li id='${id}'><p>${title}</p>
+  //! I. вариант через createElement, не подходит для создания вложенных элементов
+  //   const markup = books.map(({ title }) => {
+  //     const item = document.createElement('li');
+  //     item.textContent = title;
+  //     return item;
+  //   })
+
+  //   console.log(...markup)
+  // }
+
+  //! II. дз №3
+  const markup = books.map(({ id, title }) => {
+    return `<li id='${id}'><p>${title}</p>
         <button class='delete'>Delete</button><button class='edit'>Edit</button></li>`
-    }).join('');
-    // вставляем сгенерированные строки в список list
-    list.insertAdjacentHTML('afterbegin', markup);
+  }).join("");
+
+ //*  вставляем сгенерированные строки в список list
+  // list.innerHTML = "";
+  // list.insertAdjacentHTML('afterbegin', markup);
+  
+  list.innerHTML = markup;
 }
 
 renderList();
+
+//! дз №1
+//! задача, найти содержимое всех абразцев элементов списка ul
+const ul = document.querySelector("ul");
+const items = document.querySelectorAll("li");
+console.log(items);
+
+items.forEach(item => {
+  // I.
+  //  console.log(item.firstElementChild.textContent);
+
+  // II. вариант доступ через querySelector из элемента li
+  console.log(item.querySelector("p").textContent);
+});
+
