@@ -81,7 +81,7 @@ function renderList() {
 
   //! II. дз №3
   const markup = books.map(({ id, title }) => {
-    return `<li id='${id}'><p>${title}</p>
+    return `<li id='${id}'><p class='book-title'>${title}</p>
         <button class='delete'>Delete</button><button class='edit'>Edit</button></li>`
   }).join("");
 
@@ -90,21 +90,69 @@ function renderList() {
   // list.insertAdjacentHTML('afterbegin', markup);
   
   list.innerHTML = markup;
+
+  //* выбираем все параграфы, перебираем через forEach и добавляем слушатель событий
+  const titles = document.querySelectorAll('.book-title');
+  titles.forEach(title => title.addEventListener('click', renderPreview))
+
+  //* добавляем слушатель событий на кнопки delete
+  const deleteBtns = document.querySelectorAll('.delete');
+  deleteBtns.forEach(btn => btn.addEventListener('click', deleteBook))
 }
 
 renderList();
 
 //! дз №1
 //! задача, найти содержимое всех абразцев элементов списка ul
-const ul = document.querySelector("ul");
-const items = document.querySelectorAll("li");
-console.log(items);
+// const ul = document.querySelector("ul");
+// const items = document.querySelectorAll("li");
+// console.log(items);
 
-items.forEach(item => {
-  // I.
-  //  console.log(item.firstElementChild.textContent);
+// items.forEach(item => {
+//   // I.
+//   //  console.log(item.firstElementChild.textContent);
 
-  // II. вариант доступ через querySelector из элемента li
-  console.log(item.querySelector("p").textContent);
-});
+//   // II. вариант доступ через querySelector из элемента li
+//   console.log(item.querySelector("p").textContent);
+// });
 
+//! -----------------------Module 6-2 Events-----------------------
+//* добавляем функционал для приложения. При клике на название книги справа появляется превью. События на кнопки.
+//* добавляет слушатель событий на абзац р в функцию renderList
+
+// функция для определения книги, на название которой нажали
+function renderPreview(event) {
+  const bookName = event.target.textContent;
+
+  // ищем по массиву объектов книгу, где title = нажатому названию
+  // делаем деструктуризацию по title
+  const book = books.find(({ title }) => title === bookName);
+
+  const markup = createPreviewMarkup(book);
+  console.log(markup);
+  secondDiv.innerHTML = markup;
+}
+
+// отдельная функция для создания разметки справа
+function createPreviewMarkup({id, title, author, img, plot}) {
+  return `<div data-id='${id}' class='book-info'>
+  <h2>${title}</h2>
+  <p>${author}</p>
+  <img src='${img}' alt='${title}'>
+  <p>${plot}</p>
+  </div>`;
+}
+
+function deleteBook(event) {
+  // получаем id книги из li через кнопку
+  const bookId = event.target.parentNode.id;
+  
+  // фильтруем список объектов 
+  books = books.filter(({ id }) => id !== bookId);
+  renderList();
+  const bookInfo = document.querySelector('.book-info');
+  if (bookInfo && bookInfo.dataset.id === bookId) {
+    secondDiv.innerHTML = "";
+  }
+  
+}
