@@ -65,6 +65,8 @@ const addButton = document.createElement('button');
 addButton.textContent = 'Add book';
 firstDiv.append(title, list, addButton);
 
+addButton.addEventListener('click', addBook);
+
 // создаем список элементов из массива объектов через функцию
 //перебираем массив через map и деструктуризируем
 //join используется для преобразования результата в виде массива в строку для insertAdjacentHTML()
@@ -127,10 +129,7 @@ function renderPreview(event) {
   // ищем по массиву объектов книгу, где title = нажатому названию
   // делаем деструктуризацию по title
   const book = books.find(({ title }) => title === bookName);
-
-  const markup = createPreviewMarkup(book);
-  console.log(markup);
-  secondDiv.innerHTML = markup;
+  secondDiv.innerHTML = createPreviewMarkup(book);
 }
 
 // отдельная функция для создания разметки справа
@@ -151,8 +150,57 @@ function deleteBook(event) {
   books = books.filter(({ id }) => id !== bookId);
   renderList();
   const bookInfo = document.querySelector('.book-info');
+  // очищаем правую часть, если удаляемая книга открыта справа
   if (bookInfo && bookInfo.dataset.id === bookId) {
     secondDiv.innerHTML = "";
+  }  
+}
+
+//* добавляем функцию добавления книги при нажатии на кнопку Add
+function addBook() {
+  secondDiv.innerHTML = createFormMarkup();
+
+  // создаем заготовку для новой книги. id берется уникальный автоматически через Date.now()
+  const newBook = {
+    id: Date.now(),
+    title: '',
+    author: '',
+    img: '',
+    plot: ''
   }
-  
+
+  fillObject(newBook);
+
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    console.log(newBook);
+  });
+}
+
+// функция для создания разметки формы
+function createFormMarkup() {
+  return `
+  <form>
+    <label>Title: <input type='text' name='title'></label>
+    <label>Author: <input type='text' name='author'></label>
+    <label>Image: <input type='url' name='img'></label>
+    <label>Plot: <input type='text' name='plot'></label>
+    <button>Save</button>
+  </form>
+  `;
+}
+
+// функция для переноса содержимого input-ов в свойства объекта
+function fillObject(book) {
+  const inputs = document.querySelectorAll("input");
+  inputs.forEach((input) =>
+    input.addEventListener("change", (event) => {
+      // console.log(event.target);
+      // console.log(event.target.name);
+      // console.log(event.target.value);
+      book[event.target.name] = event.target.value;
+    })
+  );
 }
